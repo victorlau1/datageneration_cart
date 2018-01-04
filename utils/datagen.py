@@ -66,25 +66,25 @@ class CartGenerator:
     counter = random.randint(1,5)
 
     for x in range(counter):
-      item = self.items[random.randint(0,30)]
+      item = self.db[random.randint(0,29)]
       subtotal = 0
       shipping_cost = 0
       item['quantity'] = random.randint(1,5)
       subtotal = item['quantity'] * item['item_price']
       shipping_cost = item['shipping_cost'] + shipping_cost
       data['item_list'].append(item)
-      data['subtotal'] = total
+      data['subtotal'] = subtotal
       data['shipping_cost'] = shipping_cost
   
     return data
 
   def write_file(self):
     
-    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp),'json')
+    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.json')
     print(location)
-    with open(location, "r") as outfile:
+    with open(location, "w") as outfile:
       for x in range(self.datasize):
-        json.dump(self.data_generation(self.datasize), outfile, ensure_ascii=false)  
+        json.dump(self.data_generation(self.datasize), outfile, ensure_ascii=False)  
 
 print(os.path.dirname(os.path.realpath(__file__)))
 CartGenerator(100, os.path.dirname(os.path.realpath(__file__)))
