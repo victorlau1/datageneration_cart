@@ -30,6 +30,7 @@ class CartGenerator:
     self.write_location = write_location
     self.unix_timestamp = round(time.time(),2)
     self.db = []
+    self.output_type = '.txt'
     self.create_db()
     self.write_file()
 
@@ -81,7 +82,7 @@ class CartGenerator:
 
   def write_file(self):
     
-    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.csv')
+    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+self.output_type)
 
     if self.datasize > 5000000:
       print('Input large, splitting to smaller files')
@@ -94,24 +95,24 @@ class CartGenerator:
           for x in range(1000000):
             temp_item = self.data_generation(x + counter)  
             json.dump(temp_item, outfile, ensure_ascii=False)
-            json.dump(',', outfile, ensure_ascii=False)
+            outfile.write(",\n")
         outfile.close()
         counter = counter + 1000000
 
-        location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+'.csv')
+        location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+self.output_type)
 
-      location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+'.csv')
+      location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+self.output_type)
       with open(location, "w") as outfile:
         for x in range(remainder):
           temp_item = self.data_generation(x + counter)
           json.dump(temp_item, outfile, ensure_ascii=False)
-          json.dump(',', outfile, ensure_ascii=False)
+          outfile.write(",\n")
     else:
       with open(location, "w") as outfile:
         for x in range(self.datasize):
           temp_item = self.data_generation(x)
           json.dump(temp_item, outfile, ensure_ascii=False)
-          json.dump(',', outfile, ensure_ascii=False)
+          outfile.write(",\n")
 
 print(os.path.dirname(os.path.realpath(__file__)))
 start = datetime.datetime.now()
