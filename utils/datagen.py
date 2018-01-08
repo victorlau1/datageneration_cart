@@ -21,7 +21,7 @@ SCHEMA
         }]
 }
 """
-import os, time, json, io, random, timeit, sys
+import os, time, json, io, random, timeit, sys, datetime
 
 class CartGenerator:
 
@@ -81,34 +81,40 @@ class CartGenerator:
 
   def write_file(self):
     
-    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
+    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.csv')
 
     if self.datasize > 5000000:
+      print('Input large, splitting to smaller files')
       remainder = self.datasize % 1000000
       counter = 0
       
       while counter < self.datasize:
+        print(counter)
         with open(location, "w") as outfile:
-          for x in range(counter):
-            temp_item = self.data_generation(x)  
+          for x in range(1000000):
+            temp_item = self.data_generation(x + counter)  
             json.dump(temp_item, outfile, ensure_ascii=False)
+            json.dump(',', outfile, ensure_ascii=False)
+        outfile.close()
         counter = counter + 1000000
-        location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
-      
-      location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
-        with open(location, "w") as outfile:
-          for x in range(remainder):
-            temp_item = self.data_generation(x)
-            json.dump(temp_item, outfile, ensure_ascii=False)
-    
-    elif with open(location, "w") as outfile:
-      for x in range(self.datasize):
-        temp_item = self.data_generation(x)
-        # print(temp_item)s
-        json.dump(temp_item, outfile, ensure_ascii=False)  
+
+        location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+'.csv')
+
+      location = os.path.join(self.write_location,'Data'+str(round(time.time(),2))+'.csv')
+      with open(location, "w") as outfile:
+        for x in range(remainder):
+          temp_item = self.data_generation(x + counter)
+          json.dump(temp_item, outfile, ensure_ascii=False)
+          json.dump(',', outfile, ensure_ascii=False)
+    else:
+      with open(location, "w") as outfile:
+        for x in range(self.datasize):
+          temp_item = self.data_generation(x)
+          json.dump(temp_item, outfile, ensure_ascii=False)
+          json.dump(',', outfile, ensure_ascii=False)
 
 print(os.path.dirname(os.path.realpath(__file__)))
-start = timeit.timeit()
+start = datetime.datetime.now()
 CartGenerator(int(sys.argv[1]), os.path.dirname(os.path.realpath(__file__)))
-end = timeit.timeit()
+end = datetime.datetime.now()
 print(end - start)
