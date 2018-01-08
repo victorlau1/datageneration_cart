@@ -21,14 +21,14 @@ SCHEMA
         }]
 }
 """
-import os, time, json, io, random
+import os, time, json, io, random, timeit, sys
 
 class CartGenerator:
 
   def __init__(self, datasize, write_location):
     self.datasize = datasize
     self.write_location = write_location
-    self.unix_timestamp = time.time()
+    self.unix_timestamp = round(time.time(),2)
     self.db = []
     self.create_db()
     self.write_file()
@@ -39,8 +39,8 @@ class CartGenerator:
       self.db.append(item)
 
   def random_item_generator(self, item_id):
-    item_price = [random.uniform(1,100), random.uniform(150,250), random.uniform(250,600)]
-    shipping_cost = random.uniform(5,10)
+    item_price = [round(random.uniform(1,100),2), round(random.uniform(150,250),2), round(random.uniform(250,600),2)]
+    shipping_cost = round(random.uniform(5,10),2)
 
     return {
       "id": item_id,
@@ -63,28 +63,52 @@ class CartGenerator:
       "item_list": []
     }
 
-    counter = random.randint(1,5)
+    counter = random.randint(1,3)
+    subtotal = 0
+    shipping_cost = 0
 
     for x in range(counter):
       item = self.db[random.randint(0,29)]
-      subtotal = 0
-      shipping_cost = 0
       item['quantity'] = random.randint(1,5)
-      subtotal = item['quantity'] * item['item_price']
+      subtotal = item['quantity'] * item['item_price'] + subtotal
       shipping_cost = item['shipping_cost'] + shipping_cost
       data['item_list'].append(item)
-      data['subtotal'] = subtotal
-      data['shipping_cost'] = shipping_cost
+
+    data['subtotal'] = round(subtotal,2)
+    data['shipping_cost'] = round(shipping_cost,2)
   
     return data
 
   def write_file(self):
     
-    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.json')
-    print(location)
-    with open(location, "w") as outfile:
+    location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
+
+    if self.datasize > 5000000:
+      remainder = self.datasize % 1000000
+      counter = 0
+      
+      while counter < self.datasize:
+        with open(location, "w") as outfile:
+          for x in range(counter):
+            temp_item = self.data_generation(x)  
+            json.dump(temp_item, outfile, ensure_ascii=False)
+        counter = counter + 1000000
+        location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
+      
+      location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+'.txt')
+        with open(location, "w") as outfile:
+          for x in range(remainder):
+            temp_item = self.data_generation(x)
+            json.dump(temp_item, outfile, ensure_ascii=False)
+    
+    elif with open(location, "w") as outfile:
       for x in range(self.datasize):
-        json.dump(self.data_generation(self.datasize), outfile, ensure_ascii=False)  
+        temp_item = self.data_generation(x)
+        # print(temp_item)s
+        json.dump(temp_item, outfile, ensure_ascii=False)  
 
 print(os.path.dirname(os.path.realpath(__file__)))
-CartGenerator(100, os.path.dirname(os.path.realpath(__file__)))
+start = timeit.timeit()
+CartGenerator(int(sys.argv[1]), os.path.dirname(os.path.realpath(__file__)))
+end = timeit.timeit()
+print(end - start)
