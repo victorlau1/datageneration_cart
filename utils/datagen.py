@@ -26,6 +26,9 @@ import os, time, json, io, random, timeit, sys, datetime
 class CartGenerator:
 
   def __init__(self, datasize, write_location):
+    """
+      Creates text files with cart data based on input size and write location
+    """
     self.datasize = datasize
     self.write_location = write_location
     self.unix_timestamp = round(time.time(),2)
@@ -35,11 +38,17 @@ class CartGenerator:
     self.write_file()
 
   def create_db(self):
+    """
+      Create a list of 30 items (randomly to pick from in the future), only will run item generator 30 times
+    """
     for x in range(30):
       item = self.random_item_generator(x)
       self.db.append(item)
 
   def random_item_generator(self, item_id):
+    """
+      Logic to create the items, will just create an item list
+    """
     item_price = [round(random.uniform(1,100),2), round(random.uniform(150,250),2), round(random.uniform(250,600),2)]
     shipping_cost = round(random.uniform(5,10),2)
 
@@ -53,7 +62,7 @@ class CartGenerator:
 
   def data_generation(self, cart_id):
     """
-    Generates data based on datasize
+      Generates cart data based on datasize
     """
 
     data = {
@@ -81,7 +90,10 @@ class CartGenerator:
     return data
 
   def write_file(self):
-    
+    """
+      Write it to the location of execution, writes as a txt file
+    """
+
     location = os.path.join(self.write_location,'Data'+str(self.unix_timestamp)+self.output_type)
 
     if self.datasize > 5000000:
