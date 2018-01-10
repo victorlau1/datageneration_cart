@@ -6,7 +6,7 @@ from io import StringIO
 
 def checkout(locust):
   url = '/purchases/'
-  counter = randint(1,10000000)
+  counter = randint(10000,10000000)
   dataGenerator = CartGenerator(100, None)
   data = dataGenerator.data_generation(counter)
   io = StringIO()
@@ -23,5 +23,5 @@ class UserBehavior(TaskSet):
 class WebsiteUser(HttpLocust):
   task_set = UserBehavior
   host = "http://localhost:8000"
-  min_wait = 5000
-  max_wait = 9000
+  min_wait = 500
+  max_wait = 10000
