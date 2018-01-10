@@ -37,7 +37,7 @@ class CartGenerator:
 
     if (write_location is not None):
       self.output_type = '.txt'
-      self.write_file()
+      self.write_file() 
 
   def create_db(self):
     """
@@ -46,7 +46,7 @@ class CartGenerator:
     for x in range(30):
       item = self.random_item_generator(x)
       self.db.append(item)
-
+  
   def random_item_generator(self, item_id):
     """
       Logic to create the items, will just create an item list
