@@ -33,9 +33,11 @@ class CartGenerator:
     self.write_location = write_location
     self.unix_timestamp = round(time.time(),2)
     self.db = []
-    self.output_type = '.txt'
     self.create_db()
-    self.write_file()
+
+    if (write_location is not None):
+      self.output_type = '.txt'
+      self.write_file()
 
   def create_db(self):
     """
@@ -126,8 +128,10 @@ class CartGenerator:
           json.dump(temp_item, outfile, ensure_ascii=False)
           outfile.write(",\n")
 
-print(os.path.dirname(os.path.realpath(__file__)))
-start = datetime.datetime.now()
-CartGenerator(int(sys.argv[1]), os.path.dirname(os.path.realpath(__file__)))
-end = datetime.datetime.now()
-print(end - start)
+if __name__ == "__main__":
+  print(__name__)
+  print(os.path.dirname(os.path.realpath(__file__)))
+  start = datetime.datetime.now()
+  CartGenerator(int(sys.argv[1]), os.path.dirname(os.path.realpath(__file__)))
+  end = datetime.datetime.now()
+  print(end - start)
